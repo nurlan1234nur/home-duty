@@ -36,12 +36,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Prefer Vercel Blob on Vercel (serverless has no writable filesystem)
     if (process.env.BLOB_READ_WRITE_TOKEN) {
-      const key = `uploads/${filename}`;
-      const blob = await put(key, data, {
-        access: "public",
-        contentType: mime
-      });
-      return res.json({ ok: true, url: blob.url, contentType: mime });
+      try {
+        const key = `uploads/${filename}`;
+        const blob = await put(key, data, {
+          access: "public",
+          contentType: mime
+        });
+        return res.json({ ok: true, url: blob.url, contentType: mime });
+      } catch (e: any) {
+        console.error("Vercel Blob upload failed", e);
+        return res.status(500).json({ error: `Blob upload failed: ${e?.message ?? String(e)}` });
+      }
     }
 
     if (process.env.VERCEL) {
@@ -56,6 +61,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.json({ ok: true, url: `/uploads/${filename}`, contentType: mime });
   } catch (e: any) {
     console.error("Upload failed", e);
-    return res.status(500).json({ error: "Upload failed" });
+    return res.status(500).json({ error: `Upload failed: ${e?.message ?? String(e)}` });
   }
 }

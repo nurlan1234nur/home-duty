@@ -3,6 +3,7 @@ import formidable from "formidable";
 import fs from "fs";
 import { requireUser } from "@/server/auth";
 import path from "path";
+import { put } from "@vercel/blob";
 
 export const config = {
   api: { bodyParser: false },
@@ -30,11 +31,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const mime = (file.mimetype || "application/octet-stream") as string;
     const ext = (file.originalFilename || "upload").split(".").pop() || "bin";
     const filename = `${user.id}-${Date.now()}.${ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    const destPath = path.join(uploadDir, filename);
 
     const data = await fs.promises.readFile(file.filepath);
 
+    // Prefer Vercel Blob on Vercel (serverless has no writable filesystem)
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      const key = `uploads/${filename}`;
+      const blob = await put(key, data, {
+        access: "public",
+        contentType: mime
+      });
+      return res.json({ ok: true, url: blob.url, contentType: mime });
+    }
+
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    const destPath = path.join(uploadDir, filename);
     await fs.promises.mkdir(uploadDir, { recursive: true });
     await fs.promises.writeFile(destPath, data);
 

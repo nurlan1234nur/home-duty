@@ -27,17 +27,17 @@ body{
 body.login-page{
   background: linear-gradient(180deg, rgba(4,8,16,.70), rgba(4,8,16,.55)),
               url("../img/miaw.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: top center;
+  background-repeat: repeat;
 }
 
 body.app-page{
   background: linear-gradient(180deg, rgba(4,8,16,.70), rgba(4,8,16,.55)),
               url("../img/pic.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: top center;
+  background-repeat: repeat;
 }
 
 a{

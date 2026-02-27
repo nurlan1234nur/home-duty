@@ -24,6 +24,22 @@ body{
   color: var(--text);
 }
 
+body.login-page{
+  background: linear-gradient(180deg, rgba(4,8,16,.70), rgba(4,8,16,.55)),
+              url("../img/miaw.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body.app-page{
+  background: linear-gradient(180deg, rgba(4,8,16,.70), rgba(4,8,16,.55)),
+              url("../img/pic.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 a{
   color: var(--primary);
   text-decoration: none;

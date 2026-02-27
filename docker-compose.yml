@@ -1,0 +1,19 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - HOUSEHOLD_INVITE_CODE=${HOUSEHOLD_INVITE_CODE}
+      - HOUSEHOLD_NAME=${HOUSEHOLD_NAME}
+      - HOUSEHOLD_TIMEZONE=${HOUSEHOLD_TIMEZONE}
+      - HOUSEHOLD_MAX_USERS=${HOUSEHOLD_MAX_USERS}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_COOKIE_NAME=${JWT_COOKIE_NAME}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_WEBHOOK_SECRET=${TELEGRAM_WEBHOOK_SECRET}
+      - APP_BASE_URL=${APP_BASE_URL}
+      - CRON_SECRET=${CRON_SECRET}

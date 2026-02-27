@@ -1,25 +1,43 @@
 {
-  "name": "home-duty",
-  "version": "0.1.0",
+  "name": "household-duty-scheduler",
   "private": true,
+  "version": "1.0.0",
+  "description": "5-user household duty scheduler with daily Telegram notifications (MongoDB Atlas + Vercel).",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "seed": "tsx scripts/seed.ts",
+    "cron:daily": "tsx scripts/runDaily.ts"
   },
   "dependencies": {
+    "@vercel/blob": "^2.3.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "date-fns": "^4.1.0",
+    "express": "5.2.1",
+    "formidable": "^3.5.4",
+    "jsonwebtoken": "^9.0.3",
+    "luxon": "^3.7.2",
+    "mongoose": "^9.2.2",
     "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react": "19.2.4",
+    "react-day-picker": "^9.14.0",
+    "react-dom": "19.2.4",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "typescript": "^5"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/formidable": "^3.4.7",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "dotenv": "^16.4.7",
+    "tsx": "^4.20.0",
+    "typescript": "^5.7.3"
   }
 }

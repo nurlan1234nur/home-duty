@@ -3,7 +3,7 @@ import { apiGet, apiPost } from "@/lib/api";
 import { useAuth } from "@/lib/useAuth";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { DayFeed } from "./DayFeed";
+import { DayFeed } from "../components/DayFeed";
 
 type TodayItem = {
   assignmentId: string;

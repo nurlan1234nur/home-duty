@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { DayFeed } from "../DayFeed";
+import { DayFeed } from "../../components/DayFeed";
 
 export default function DayPage() {
   const router = useRouter();

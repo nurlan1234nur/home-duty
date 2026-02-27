@@ -15,7 +15,20 @@ const EnvSchema = z.object({
 
   APP_BASE_URL: z.string().min(1).default("http://localhost:3000"),
 
-  CRON_SECRET: z.string().min(16)
+  CRON_SECRET: z.string().min(16),
+
+  ADMIN_EMAIL: z.string().email().optional().default("nurlant566@gmail.com"),
+
+  SMTP_HOST: z.string().optional().default("smtp.gmail.com"),
+  SMTP_PORT: z.string().optional().default("465"),
+  SMTP_SECURE: z.string().optional().default("true"),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM_NAME: z.string().optional().default("HOME"),
+
+  VAPID_PUBLIC_KEY: z.string().optional(),
+  VAPID_PRIVATE_KEY: z.string().optional(),
+  VAPID_SUBJECT: z.string().optional().default("mailto:admin@example.com")
 });
 
 export const env = EnvSchema.parse({
@@ -33,7 +46,20 @@ export const env = EnvSchema.parse({
 
   APP_BASE_URL: process.env.APP_BASE_URL,
 
-  CRON_SECRET: process.env.CRON_SECRET
+  CRON_SECRET: process.env.CRON_SECRET,
+
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+
+  SMTP_HOST: process.env.SMTP_HOST,
+  SMTP_PORT: process.env.SMTP_PORT,
+  SMTP_SECURE: process.env.SMTP_SECURE,
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASS: process.env.SMTP_PASS,
+  SMTP_FROM_NAME: process.env.SMTP_FROM_NAME,
+
+  VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY,
+  VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
+  VAPID_SUBJECT: process.env.VAPID_SUBJECT
 });
 
 export const HOUSEHOLD_ID = "default";

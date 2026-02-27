@@ -20,9 +20,15 @@ export default function Settings() {
       <h2>Telegram</h2>
       <p><a href="/settings/telegram">Link Telegram and get daily notifications</a></p>
 
+      <h2>Notifications</h2>
+      <p><a href="/settings/notifications">Push notification settings</a></p>
+
       <h2>Rotations</h2>
       {user.role === "admin" ? (
-        <p><a href="/settings/rotations">Configure duty rotations (admin)</a></p>
+        <>
+          <p><a href="/settings/rotations">Configure duty rotations (admin)</a></p>
+          <p><a href="/settings/members">Manage member nicknames (admin)</a></p>
+        </>
       ) : (
         <p style={{ color: "#666" }}>Only admins can change rotations.</p>
       )}

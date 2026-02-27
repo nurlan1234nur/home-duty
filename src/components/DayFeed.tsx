@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/useAuth";
 
 export type Entry = {
   id: string;
@@ -20,6 +21,11 @@ export function DayFeed({ date, compact }: Props) {
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [photoCaption, setPhotoCaption] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
+  const { user } = useAuth();
 
   async function load() {
     if (!date) return;
@@ -112,22 +118,61 @@ export function DayFeed({ date, compact }: Props) {
     const upData = await up.json();
     const url = upData.url as string;
 
+    const body: any = {
+      type: asCheckin ? "CHECKIN" : "PHOTO",
+      imageUrl: url,
+      text: asCheckin ? "Ээлж хийсэн (зураг) ✅" : (photoCaption.trim() || undefined),
+    };
+
     const res = await fetch(`/api/day/${date}`, {
       method: "POST",
       credentials: "include",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        type: asCheckin ? "CHECKIN" : "PHOTO",
-        imageUrl: url,
-        text: asCheckin ? "Ээлж хийсэн (зураг) ✅" : "Фото 🖼",
-      }),
+      body: JSON.stringify(body),
     });
 
     setUploading(false);
+    setPhotoCaption("");
 
     if (res.status === 401) return (window.location.href = "/login");
     if (!res.ok) return setErr("Failed to save photo entry.");
 
+    await load();
+  }
+
+  async function saveEdit(id: string) {
+    const text = editingText.trim();
+    const entry = entries.find((x) => x.id === id);
+    if (entry?.type === "NOTE" && !text) {
+      setErr("Note text is required.");
+      return;
+    }
+    setSavingEdit(true);
+    setErr("");
+    const res = await fetch(`/api/entry/${id}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    setSavingEdit(false);
+    if (res.status === 401) return (window.location.href = "/login");
+    if (!res.ok) return setErr("Failed to update note.");
+
+    setEditingId(null);
+    setEditingText("");
+    await load();
+  }
+
+  async function deleteEntry(id: string) {
+    if (!confirm("Delete this entry?")) return;
+    setErr("");
+    const res = await fetch(`/api/entry/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (res.status === 401) return (window.location.href = "/login");
+    if (!res.ok) return setErr("Failed to delete entry.");
     await load();
   }
 
@@ -163,6 +208,14 @@ export function DayFeed({ date, compact }: Props) {
           <hr className="hr" />
 
           <div className="h2">Photo</div>
+          <label className="label">Caption (optional)</label>
+          <input
+            className="input"
+            value={photoCaption}
+            onChange={(e) => setPhotoCaption(e.target.value)}
+            placeholder="Зургийн тайлбар..."
+            disabled={uploading}
+          />
           <div className="row">
             <label className="btn" style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
               {uploading ? "Uploading…" : "🖼 Upload photo"}
@@ -214,9 +267,57 @@ export function DayFeed({ date, compact }: Props) {
                       </div>
                       <div className="itemMeta">{new Date(e.createdAt).toLocaleString()}</div>
                     </div>
+                    <div className="row" style={{ gap: 6 }}>
+                      {user && (user.id === e.author.id || user.role === "admin") ? (
+                        editingId === e.id ? null : (
+                          <button
+                            className="btn"
+                            onClick={() => {
+                              setEditingId(e.id);
+                              setEditingText(e.text || "");
+                            }}
+                          >
+                            Edit
+                          </button>
+                        )
+                      ) : null}
+                      {user && (user.id === e.author.id || user.role === "admin") ? (
+                        <button className="btn" onClick={() => deleteEntry(e.id)}>
+                          Delete
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
 
-                  {e.text ? <div style={{ marginTop: 8 }}>{e.text}</div> : null}
+                  {editingId === e.id ? (
+                    <div style={{ marginTop: 8 }}>
+                      <textarea
+                        className="textarea"
+                        value={editingText}
+                        onChange={(e) => setEditingText(e.target.value)}
+                      />
+                      <div className="row" style={{ marginTop: 8 }}>
+                        <button
+                          className="btn btnPrimary"
+                          disabled={savingEdit}
+                          onClick={() => saveEdit(e.id)}
+                        >
+                          {savingEdit ? "…" : "Save"}
+                        </button>
+                        <button
+                          className="btn"
+                          onClick={() => {
+                            setEditingId(null);
+                            setEditingText("");
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : e.text ? (
+                    <div style={{ marginTop: 8 }}>{e.text}</div>
+                  ) : null}
 
                   {e.imageUrl ? (
                     <div style={{ marginTop: 10 }}>

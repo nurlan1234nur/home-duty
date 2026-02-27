@@ -61,6 +61,11 @@ export default function Login() {
               No account? <a href="/signup">Sign up</a>
             </span>
           </div>
+          <div className="row" style={{ marginTop: 10 }}>
+            <span className="small">
+              Forgot password? <a href="/forgot">Reset</a>
+            </span>
+          </div>
         </form>
       </div>
     </div>

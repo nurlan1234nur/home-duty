@@ -36,7 +36,8 @@ export async function requireUser(req: any) {
     const user = await UserModel.findById(userId).lean();
     if (!user) return null;
 
-    return { id: String(user._id), name: user.name, role: user.role };
+    const displayName = user.nickname || user.name;
+    return { id: String(user._id), name: displayName, role: user.role };
   } catch {
     return null;
   }

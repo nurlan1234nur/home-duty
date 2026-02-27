@@ -3,6 +3,7 @@ import { z } from "zod";
 import { dbConnect } from "@/server/db/mongoose";
 import { Entry } from "@/server/models/Entry";
 import { requireUser } from "@/server/auth";
+import { notifyEntryCreated } from "@/server/services/notifications";
 
 const postSchema = z.object({
   type: z.enum(["NOTE", "PHOTO", "CHECKIN"]),
@@ -23,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === "GET") {
     const entries = await Entry.find({ date })
-      .populate("authorUserId", "name")
+      .populate("authorUserId", "name nickname")
       .sort({ createdAt: -1 })
       .lean();
 
@@ -35,7 +36,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         text: e.text || "",
         imageUrl: e.imageUrl || "",
         createdAt: e.createdAt,
-        author: { id: String(e.authorUserId?._id), name: e.authorUserId?.name || "Unknown" },
+        author: {
+          id: String(e.authorUserId?._id),
+          name: e.authorUserId?.nickname || e.authorUserId?.name || "Unknown"
+        },
       })),
     });
   }
@@ -51,6 +55,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       imageUrl: parsed.data.imageUrl,
       authorUserId: user.id,
     });
+
+    notifyEntryCreated({
+      authorUserId: user.id,
+      authorName: user.name,
+      date,
+      type: parsed.data.type,
+      text: parsed.data.text
+    }).catch(() => {});
 
     return res.json({ ok: true, id: String(created._id) });
   }

@@ -12,6 +12,7 @@ import { assignmentsRouter } from "./routes/assignments";
 import { profileRouter } from "./routes/profile";
 import { telegramRouter } from "./routes/telegram";
 import { cronRouter } from "./routes/cron";
+import { pushRouter } from "./routes/push";
 
 let cachedApp: any = null;
 
@@ -40,6 +41,7 @@ export function getExpressApp() {
   app.use("/api/v1/assignments", assignmentsRouter);
   app.use("/api/v1/profile", profileRouter);
   app.use("/api/v1/telegram", telegramRouter);
+  app.use("/api/v1/push", pushRouter);
   app.use("/api/v1/cron", cronRouter);
 
   app.use(notFound);

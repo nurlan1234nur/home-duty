@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "./api";
 
-type Me = { id: string; name: string; email: string; role: "admin" | "member" };
+type Me = {
+  id: string;
+  name: string;
+  nickname?: string;
+  displayName?: string;
+  notificationPrefs?: {
+    enabled: boolean;
+    types: { note: boolean; photo: boolean; checkin: boolean };
+  };
+  email: string;
+  role: "admin" | "member";
+};
 
 export function useAuth() {
   const [user, setUser] = useState<Me | null>(null);

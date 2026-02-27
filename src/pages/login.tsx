@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { apiPost } from "@/lib/api";
+import { setAuthToken } from "@/lib/authToken";
 import { useRouter } from "next/router";
 
 export default function Login() {
@@ -14,7 +15,8 @@ export default function Login() {
     setErr(null);
     setBusy(true);
     try {
-      await apiPost("/api/v1/auth/login", { email, password });
+      const res = await apiPost("/api/v1/auth/login", { email, password });
+      if (res?.token) setAuthToken(res.token);
       router.push("/dashboard");
     } catch (e: any) {
       setErr(e?.message ?? "Login failed");

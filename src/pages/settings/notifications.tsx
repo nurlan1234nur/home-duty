@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/lib/useAuth";
 import { apiGet } from "@/lib/api";
+import { authFetch } from "@/lib/authFetch";
 
 type Prefs = {
   enabled: boolean;
@@ -57,9 +58,8 @@ export default function NotificationsSettings() {
       types: next.types ?? prefs.types
     };
     try {
-      const res = await fetch("/api/v1/me/notifications", {
+      const res = await authFetch("/api/v1/me/notifications", {
         method: "PATCH",
-        credentials: "include",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(updated)
       });
@@ -87,9 +87,8 @@ export default function NotificationsSettings() {
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(config.publicKey)
       });
-      await fetch("/api/v1/push/subscribe", {
+      await authFetch("/api/v1/push/subscribe", {
         method: "POST",
-        credentials: "include",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ subscription: sub })
       });
@@ -108,9 +107,8 @@ export default function NotificationsSettings() {
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.getSubscription();
       if (sub) {
-        await fetch("/api/v1/push/unsubscribe", {
+        await authFetch("/api/v1/push/unsubscribe", {
           method: "POST",
-          credentials: "include",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ endpoint: sub.endpoint })
         });

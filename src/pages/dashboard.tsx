@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiGet, apiPost } from "@/lib/api";
+import { setAuthToken } from "@/lib/authToken";
 import { useAuth } from "@/lib/useAuth";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -53,6 +54,7 @@ export default function Dashboard() {
 
   async function logout() {
     await apiPost("/api/v1/auth/logout", {});
+    setAuthToken(null);
     await refresh();
     router.push("/login");
   }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/useAuth";
+import { authFetch } from "@/lib/authFetch";
 
 export type Entry = {
   id: string;
@@ -31,7 +32,7 @@ export function DayFeed({ date, compact }: Props) {
     if (!date) return;
 
     setErr("");
-    const res = await fetch(`/api/day/${date}`, { credentials: "include" });
+    const res = await authFetch(`/api/day/${date}`);
     if (res.status === 401) {
       window.location.href = "/login";
       return;
@@ -55,9 +56,8 @@ export function DayFeed({ date, compact }: Props) {
 
     setBusy(true);
     setErr("");
-    const res = await fetch(`/api/day/${date}`, {
+    const res = await authFetch(`/api/day/${date}`, {
       method: "POST",
-      credentials: "include",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ type: "NOTE", text }),
     });
@@ -75,9 +75,8 @@ export function DayFeed({ date, compact }: Props) {
 
     setBusy(true);
     setErr("");
-    const res = await fetch(`/api/day/${date}`, {
+    const res = await authFetch(`/api/day/${date}`, {
       method: "POST",
-      credentials: "include",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ type: "CHECKIN", text: "Ээлж хийсэн ✅" }),
     });
@@ -98,9 +97,8 @@ export function DayFeed({ date, compact }: Props) {
     const form = new FormData();
     form.append("file", file);
 
-    const up = await fetch(`/api/upload`, {
+    const up = await authFetch(`/api/upload`, {
       method: "POST",
-      credentials: "include",
       body: form,
     });
 
@@ -124,9 +122,8 @@ export function DayFeed({ date, compact }: Props) {
       text: asCheckin ? "Ээлж хийсэн (зураг) ✅" : (photoCaption.trim() || undefined),
     };
 
-    const res = await fetch(`/api/day/${date}`, {
+    const res = await authFetch(`/api/day/${date}`, {
       method: "POST",
-      credentials: "include",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
     });
@@ -149,9 +146,8 @@ export function DayFeed({ date, compact }: Props) {
     }
     setSavingEdit(true);
     setErr("");
-    const res = await fetch(`/api/entry/${id}`, {
+    const res = await authFetch(`/api/entry/${id}`, {
       method: "PATCH",
-      credentials: "include",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ text }),
     });
@@ -167,9 +163,8 @@ export function DayFeed({ date, compact }: Props) {
   async function deleteEntry(id: string) {
     if (!confirm("Delete this entry?")) return;
     setErr("");
-    const res = await fetch(`/api/entry/${id}`, {
+    const res = await authFetch(`/api/entry/${id}`, {
       method: "DELETE",
-      credentials: "include",
     });
     if (res.status === 401) return (window.location.href = "/login");
     if (!res.ok) return setErr("Failed to delete entry.");

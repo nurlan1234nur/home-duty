@@ -3,6 +3,7 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { format } from "date-fns";
 import Link from "next/link";
+import { authFetch } from "@/lib/authFetch";
 
 type Summary = Record<string, { NOTE: number; PHOTO: number; CHECKIN: number }>;
 
@@ -18,16 +19,14 @@ export default function CalendarPage() {
       setErr("");
 
       // 1) session байгаа эсэхийг /api/v1/me-ээр шалгана (cookie-оор)
-      const me = await fetch("/api/v1/me", { credentials: "include" });
+      const me = await authFetch("/api/v1/me");
       if (!me.ok) {
         window.location.href = "/login";
         return;
       }
 
       // 2) summary авах (бас cookie-оор)
-      const res = await fetch(`/api/calendar/summary?month=${monthKey}`, {
-        credentials: "include",
-      });
+      const res = await authFetch(`/api/calendar/summary?month=${monthKey}`);
 
       if (!res.ok) {
         setErr("Failed to load calendar.");

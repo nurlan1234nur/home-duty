@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiGet } from "./api";
+import { setAuthToken } from "./authToken";
 
 type Me = {
   id: string;
@@ -21,6 +22,7 @@ export function useAuth() {
   async function refresh() {
     try {
       const me = await apiGet("/api/v1/me");
+      if (me?.token) setAuthToken(me.token);
       setUser(me.user);
     } catch {
       setUser(null);

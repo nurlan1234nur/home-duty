@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/useAuth";
+import { authFetch } from "@/lib/authFetch";
 import { useRouter } from "next/router";
 
 type Member = {
@@ -19,7 +20,7 @@ export default function MembersSettings() {
 
   async function load() {
     setErr("");
-    const res = await fetch("/api/v1/users", { credentials: "include" });
+    const res = await authFetch("/api/v1/users");
     if (res.status === 401) return router.replace("/login");
     if (!res.ok) return setErr("Failed to load users.");
     const data = await res.json();
@@ -34,9 +35,8 @@ export default function MembersSettings() {
   async function saveNickname(m: Member) {
     setSavingId(m.id);
     setErr("");
-    const res = await fetch(`/api/v1/users/${m.id}`, {
+    const res = await authFetch(`/api/v1/users/${m.id}`, {
       method: "PATCH",
-      credentials: "include",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ nickname: m.nickname }),
     });

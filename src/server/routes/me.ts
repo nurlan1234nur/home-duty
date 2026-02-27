@@ -16,6 +16,7 @@ function setTokenCookie(res: any, userId: string) {
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000
   });
+  return token;
 }
 
 meRouter.get("/", authRequired, async (req: AuthedRequest, res) => {
@@ -23,8 +24,9 @@ meRouter.get("/", authRequired, async (req: AuthedRequest, res) => {
   const user = await UserModel.findById(req.user!.id).lean();
   if (!user) return res.status(401).json({ error: "Unauthorized" });
 
-  setTokenCookie(res, String(user._id));
+  const token = setTokenCookie(res, String(user._id));
   return res.json({
+    token,
     user: {
       id: String(user._id),
       name: user.name,
@@ -63,8 +65,9 @@ meRouter.patch("/notifications", authRequired, async (req: AuthedRequest, res) =
   }
 
   await user.save();
-  setTokenCookie(res, String(user._id));
+  const token = setTokenCookie(res, String(user._id));
   return res.json({
+    token,
     user: {
       id: String(user._id),
       name: user.name,

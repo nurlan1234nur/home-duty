@@ -67,6 +67,7 @@ function setTokenCookie(res: any, userId: string) {
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000
   });
+  return token;
 }
 
 authRouter.post("/signup", async (req, res) => {
@@ -100,8 +101,9 @@ authRouter.post("/signup", async (req, res) => {
     role
   });
 
-  setTokenCookie(res, String(user._id));
+  const token = setTokenCookie(res, String(user._id));
   return res.json({
+    token,
     user: {
       id: String(user._id),
       name: user.name,
@@ -128,8 +130,9 @@ authRouter.post("/login", async (req, res) => {
     await user.save();
   }
 
-  setTokenCookie(res, String(user._id));
+  const token = setTokenCookie(res, String(user._id));
   return res.json({
+    token,
     user: {
       id: String(user._id),
       name: user.name,

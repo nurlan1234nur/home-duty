@@ -108,8 +108,9 @@ export function DayFeed({ date, compact }: Props) {
       return;
     }
     if (!up.ok) {
+      const err = await up.json().catch(() => ({}));
       setUploading(false);
-      setErr("Upload failed.");
+      setErr(err?.error ?? "Upload failed.");
       return;
     }
 

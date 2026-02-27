@@ -44,6 +44,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.json({ ok: true, url: blob.url, contentType: mime });
     }
 
+    if (process.env.VERCEL) {
+      return res.status(500).json({ error: "Vercel Blob not configured" });
+    }
+
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     const destPath = path.join(uploadDir, filename);
     await fs.promises.mkdir(uploadDir, { recursive: true });

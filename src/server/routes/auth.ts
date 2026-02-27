@@ -59,13 +59,13 @@ async function sendResetEmail(to: string, resetUrl: string) {
 }
 
 function setTokenCookie(res: any, userId: string) {
-  const token = jwt.sign({}, env.JWT_SECRET, { subject: userId, expiresIn: "30d" });
+  const token = jwt.sign({}, env.JWT_SECRET, { subject: userId, expiresIn: "300d" });
   res.cookie(env.JWT_COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 30 * 24 * 60 * 60 * 1000
+    maxAge: 300 * 24 * 60 * 60 * 1000
   });
   return token;
 }

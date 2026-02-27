@@ -13,18 +13,18 @@ export const authRouter = Router();
 
 const SignupSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.string().email().transform((v) => v.trim().toLowerCase()),
   password: z.string().min(8),
   inviteCode: z.string().min(1)
 });
 
 const LoginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().transform((v) => v.trim().toLowerCase()),
   password: z.string().min(1)
 });
 
 const ForgotSchema = z.object({
-  email: z.string().email()
+  email: z.string().email().transform((v) => v.trim().toLowerCase())
 });
 
 const ResetSchema = z.object({
@@ -84,7 +84,7 @@ authRouter.post("/signup", async (req, res) => {
     return res.status(403).json({ error: "Household is full (max 5 users)" });
   }
 
-  const existing = await UserModel.findOne({ email: body.email.toLowerCase() }).lean();
+  const existing = await UserModel.findOne({ email: body.email }).lean();
   if (existing) return res.status(409).json({ error: "Email already registered" });
 
   const passwordHash = await bcrypt.hash(body.password, 10);
@@ -96,7 +96,7 @@ authRouter.post("/signup", async (req, res) => {
   const user = await UserModel.create({
     householdId: HOUSEHOLD_ID,
     name: body.name,
-    email: body.email.toLowerCase(),
+    email: body.email,
     passwordHash,
     role
   });
@@ -118,7 +118,7 @@ authRouter.post("/login", async (req, res) => {
   const body = LoginSchema.parse(req.body);
   await dbConnect();
 
-  const user = await UserModel.findOne({ email: body.email.toLowerCase() });
+  const user = await UserModel.findOne({ email: body.email });
   if (!user) return res.status(401).json({ error: "Invalid email or password" });
 
   const ok = await bcrypt.compare(body.password, user.passwordHash);
@@ -147,7 +147,7 @@ authRouter.post("/forgot", async (req, res) => {
   const body = ForgotSchema.parse(req.body);
   await dbConnect();
 
-  const user = await UserModel.findOne({ email: body.email.toLowerCase() });
+  const user = await UserModel.findOne({ email: body.email });
   if (user) {
     const rawToken = crypto.randomBytes(32).toString("hex");
     const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");

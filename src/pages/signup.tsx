@@ -49,6 +49,10 @@ export default function Signup() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          inputMode="email"
         />
 
         <label>Invite code</label>
@@ -65,6 +69,9 @@ export default function Signup() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="new-password"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
         />
 
         <button disabled={busy} style={{ padding: "8px 12px" }}>
